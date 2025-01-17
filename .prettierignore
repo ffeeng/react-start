@@ -1,0 +1,8 @@
+build/
+dist/
+public/
+node_modules/
+local/
+package-lock.json
+yarn.lock
+*.html
