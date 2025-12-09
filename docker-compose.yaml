@@ -1,0 +1,9 @@
+services:
+  web:
+    image: web:latest
+    container_name: web
+    ports:
+      - "5173:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d       # 挂载配置目录
+      - ./nginx/log:/var/log/nginx

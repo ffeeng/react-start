@@ -1,24 +1,34 @@
-FROM hub-mirror.test.cn/sreopen/node:18.16 as builder
+# -----------------------
+# 1️⃣ Build Stage
+# -----------------------
+FROM node:22-alpine AS builder
 
-RUN npm config set registry https://registry.npm.test.cn && \
-    npm config set loglevel=error && \
-    npm i -g pnpm@8.7.6
+# 设置 npm 源（可选）
+# RUN npm config set registry https://registry.npmmirror.com
 
-ADD ./ /app
 WORKDIR /app
 
-RUN pnpm i
+COPY package*.json ./
+COPY pnpm-lock.yaml ./
+RUN npm install -g pnpm --registry https://registry.npmmirror.com/ --fetch-timeout=60000
+RUN pnpm install --frozen-lockfile
 
-RUN pnpm run build
+COPY . .
+RUN pnpm run build:dev
 
-# copy build dist
-FROM khub.test.cn/sreopen/nginx:stable
+# -----------------------
+# 2️⃣ Production Stage
+# -----------------------
+FROM nginx:alpine
 
-ENV PROJECT_PATH /data/app
-ENV NGINX_HOME_PATH /etc/nginx
+# 删除默认配置（可选）
+RUN rm -rf /usr/share/nginx/html/*
 
-COPY --from=builder /app/nginx/ $NGINX_HOME_PATH/
-COPY --from=builder /app/dist/ $PROJECT_PATH
+# 将构建产物复制到 nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# 拷贝 nginx 配置（用于 SPA history 模式）
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
-CMD ["nginx","-g","daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
