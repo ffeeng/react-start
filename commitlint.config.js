@@ -18,11 +18,7 @@ module.exports = {
         'test'
       ]
     ],
-    'subject-case': [
-      2,
-      'never',
-      ['start-case', 'pascal-case', 'upper-case']
-    ],
+    'subject-case': [2, 'never', ['start-case', 'pascal-case', 'upper-case']],
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],
     'type-case': [2, 'always', 'lower-case'],
@@ -30,7 +26,6 @@ module.exports = {
     'scope-empty': [2, 'never'],
     'scope-case': [2, 'always', 'lower-case'],
     'body-leading-blank': [1, 'always'],
-    'body-max-line-length': [2, 'always', 100],
+    'body-max-line-length': [2, 'always', 100]
   }
-};
-
+}
